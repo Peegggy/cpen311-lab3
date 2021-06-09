@@ -24,11 +24,11 @@ vga_adapter#(.RESOLUTION("160x120")) vga_u0(.resetn(KEY[3]), .clock(CLOCK_50), .
     logic [2:0] colour;
 
     always_comb begin
-        if(KEY[3] == 1'b0)
-        start = 1;
-        else if(done)
-        start = 0;
-        else start = 1;
+        if(KEY[3] == 1'b0)//if reset is pressed
+        start = 1; //start is asserted
+        else if(done) //if done asserted
+        start = 0; //start is deaserted
+        else start = 1;//else start remains 1
     end
 
     reuleaux r (.clk(CLOCK_50),

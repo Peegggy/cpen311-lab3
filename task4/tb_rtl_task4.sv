@@ -24,7 +24,7 @@ initial begin
     KEY[3] = 0;
     #10;
     KEY[3] = 1;
-    #2000;
+    #20000;
     $stop;
 end
 endmodule: tb_rtl_task4
