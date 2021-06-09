@@ -91,7 +91,7 @@ module circle(input logic clk, input logic rst_n, input logic [2:0] colour,
                done <= 1'b0;
                vga_x <= 8'b0;
                vga_y <= 7'b0;
-               vga_colour <= 3'b010;
+               vga_colour <= 3'b010;//colour is green
                vga_plot <= 1'b0;
                xLessThan <= 0;
           end
@@ -99,8 +99,11 @@ module circle(input logic clk, input logic rst_n, input logic [2:0] colour,
                if(offset_y <= offset_x)
                xLessThan <= 0;
                else
+               //if offset_y is greater than offset_x, then
+               //the circle is done
                xLessThan <= 1;
           end
+          //---- start plotting the 8 octants----
           4'd2 : begin //oct1
                vga_x <= (centre_x + offset_x);
                vga_y <= (centre_y + offset_y);
