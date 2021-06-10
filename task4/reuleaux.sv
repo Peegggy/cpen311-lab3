@@ -1,19 +1,20 @@
-`define reset 5'd0;
-`define oct2_red   5'd1;
-`define oct3_red 5'd2;
-`define Yincre_red 5'd3;
-`define crit_red 5'd4;
-`define reset_red 5'd5;
-`define oct8_green 5'd6;
-`define oct7_green 5'd7;
-`define Yincre_green 5'd8;
-`define crit_green 5'd9;
-`define reset_green 5'd10;
-`define oct5_blue  5'd11;
-`define oct6_blue 5'd12;
-`define Yincre_blue 5'd13;
-`define crit_blue 5'd14;
-`define done  5'd15;
+`define reset            5'd0;
+`define oct2_red         5'd1;
+`define oct3_red         5'd2;
+`define Yincre_red       5'd3;
+`define crit_red         5'd4;
+`define reset_red        5'd5;
+`define oct8_green       5'd6;
+`define oct7_green       5'd7;
+`define Yincre_green     5'd8;
+`define crit_green       5'd9;
+`define reset_green      5'd10;
+`define oct5_blue        5'd11;
+`define oct6_blue        5'd12;
+`define Yincre_blue      5'd13;
+`define crit_blue        5'd14;
+`define done             5'd15;
+
 
 module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
                 input logic [7:0] centre_x, input logic [6:0] centre_y, input logic [7:0] diameter,
@@ -24,6 +25,7 @@ module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
      logic signed [7:0] c_x1, c_x2, c_x3;//x coord for the centres of the 3 circles
      logic signed [6:0] c_y1, c_y2, c_y3;//y coord for the centres of the 3 circles
      logic signed [7:0] offset_x, offset_y, crit_red, crit_green, crit_blue;
+     logic signed [7:0] offset_x7, offset_y7;
      logic done_red, done_green, done_blue;
      logic [4:0] state, nextstate;
 
@@ -52,6 +54,7 @@ module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
           5'd5 : nextstate = 5'd6;
           //oct8_green -> reset_green if green is done, else -> oct7_green
           5'd6 : nextstate = done_green ? 5'd10 : 5'd7;
+          5'd16 : nextstate = 5'd7;
           //oct7_green -> Yincre_green
           5'd7 : nextstate = 5'd8;
           //Yincre_green -> crit_green
@@ -136,11 +139,13 @@ module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
           5'd5 : begin //reset_red
                offset_y <= 8'b0;
                offset_x <= diameter;
+               offset_y7 <= 8'b0;
+               offset_x7 <= diameter;
           end
           5'd6 : begin //oct8_green
                //if offset_y is greater than the height of the triangle, then that means
                //the green portion is done
-               if(offset_y + 8'd1 > diameter * $sqrt(8'd3)/8'd2) begin
+               if(offset_y + 8'd1 > diameter * $sqrt(8'd3)/8'd2 || offset_x <= offset_y) begin
                     done_green <= 1;
                end
                else begin 
@@ -152,12 +157,17 @@ module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
                     vga_colour <= 3'b010;
                end
           end
-          5'd7 : begin //oct7_green
-                    //vga_x <= (c_x2 + offset_y) + diameter/8'd2;
-                    //vga_y <= c_y2 - (offset_x * $sqrt(8'd3)/8'd2);
+          5'd7 : begin //oct7_green   
+               vga_x <= c_x2 + offset_y;
+               vga_y <= c_y2 - offset_x;                
+               if(c_x2 + offset_y >= c_x3) 
+                       vga_plot <= 1;
+               else 
+                       vga_plot <= 0;
           end
           5'd8 : begin  //Yincre_green
                offset_y <= offset_y + 1;
+              // offset_y7 <= offset_y + 1;
           end
           5'd9 : begin //crit_green
                //determine if the octant is done 
@@ -174,7 +184,7 @@ module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
                offset_x <= diameter;
           end
           5'd11 : begin //oct5_blue
-               if(offset_y + 8'd1 > diameter * $sqrt(8'd3)/8'd2) begin
+               if(offset_y + 8'd1 > diameter * $sqrt(8'd3)/8'd2 || offset_x <= offset_y) begin
                     done_blue <= 1;
                end
                else begin
@@ -187,8 +197,13 @@ module reuleaux(input logic clk, input logic rst_n, input logic [2:0] colour,
                end
           end
           5'd12 : begin //oct6_blue
-               //vga_x <= c_x1 - offset_y - diameter/8'd2;
-               //vga_y <= c_y1 - offset_x;
+               vga_x <= c_x1 - offset_y;
+               vga_y <= c_y1 - offset_x;
+               if(c_x1 - offset_y <= c_x3) begin
+                    vga_plot <= 1;
+               end
+               else
+                    vga_plot <= 0;
           end
           5'd13 : begin //Yincre_blue
                offset_y <= offset_y + 1;
