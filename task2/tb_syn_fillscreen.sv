@@ -1,3 +1,4 @@
+`timescale 1 ps / 1 ps
 module tb_syn_fillscreen();
 //this testbench tests to see if fillscreen starts properly and ends properly
 // Your testbench goes here. Our toplevel will give up after 1,000,000 ticks.
@@ -16,12 +17,12 @@ initial begin
     forever #1 clk = ~clk;
 end
 initial begin
-    rst_n = 1;//assert reset
+    rst_n = 1;
     start = 1;//assert start
     #10;
-    rst_n = 0;//deassert reset to move to the next state
+    rst_n = 0;//assert reset
     #10;
-    rst_n = 1;
+    rst_n = 1;//deassert reset to move to the next state
     #40000; //check the waveform to see if the numbers line up
     $stop;
 end

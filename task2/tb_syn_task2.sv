@@ -20,11 +20,11 @@ initial begin
     forever #1 CLOCK_50 = ~CLOCK_50;
 end
 initial begin
-    KEY[3] = 1;//assert reset
-    #10;
-    KEY[3] = 0;//deassert reset to move to the next state
-    #10;
     KEY[3] = 1;
+    #10;
+    KEY[3] = 0;//assert reset
+    #10;
+    KEY[3] = 1;//deassert reset to move to the next state
     #40000;//check the vga screen
     $stop;
 end
