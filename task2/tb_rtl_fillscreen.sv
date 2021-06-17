@@ -1,3 +1,4 @@
+`timescale 1 ps / 1 ps
 module tb_rtl_fillscreen();
 //this testbench tests to see if fillscreen starts properly and ends properly
 

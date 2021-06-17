@@ -1,3 +1,4 @@
+`timescale 1 ps / 1 ps
 `define reset       3'd0;
 `define turnPixel   3'd1;
 `define done        3'd2;
