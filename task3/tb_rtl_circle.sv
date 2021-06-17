@@ -19,7 +19,7 @@ initial begin
     clk = 0;
     forever #5 clk = ~clk;
 end
-
+//run circle
 initial begin
     rst_n = 1;//deassert reset
     centre_x = 80;
