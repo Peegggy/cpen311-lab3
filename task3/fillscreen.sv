@@ -2,7 +2,7 @@
 `define turnPixel   3'd1;
 `define done        3'd2;
 
-//the purpose of this module is to fill the vga screen black before starting the reuleaux shape
+//the purpose of this module is to fill the vga screen black before starting the circle shape
 module fillscreen(input logic clk, input logic rst_n, input logic [2:0] colour,
                   input logic start, output logic done,
                   output logic [7:0] vga_x, output logic [6:0] vga_y,
