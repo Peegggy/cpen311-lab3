@@ -22,7 +22,7 @@ module fillscreen(input logic clk, input logic rst_n, input logic [2:0] colour,
          default: nextstate = 3'd2;
           endcase
      end
-
+    //this always block decides what the current state is
      always_ff @(posedge clk) begin
           if(~rst_n)//if reset is asserted
           state <= 3'd0;//go back to reset state
